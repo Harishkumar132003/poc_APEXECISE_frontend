@@ -1,0 +1,60 @@
+# === Node / React ===
+node_modules
+build
+dist
+*.log
+
+# === Python ===
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+
+# Virtual envs
+venv/
+env/
+.venv/
+
+# === Docker ===
+.dockerignore
+Dockerfile
+docker-compose.yml
+*.Dockerfile
+
+# === Git ===
+.git
+.gitignore
+
+# === Environment / Secrets ===
+.env
+.env.*
+*.secret
+*.key
+*.pem
+
+# === OS / Editor Files ===
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# === Cache ===
+.cache/
+.npm/
+pip-cache/
+pytest_cache/
+
+# === Uploads / Runtime Data ===
+uploads/
+logs/
+
+# === Tests ===
+tests/
+coverage/
+
+# === Project-specific ===
+mysql/
+qdrant_data/
+db_data/
