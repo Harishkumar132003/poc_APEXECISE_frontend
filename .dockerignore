@@ -4,18 +4,9 @@ build
 dist
 *.log
 
-# === Python ===
-__pycache__
-*.pyc
-*.pyo
-*.pyd
-*.db
-*.sqlite3
 
-# Virtual envs
-venv/
-env/
-.venv/
+
+
 
 # === Docker ===
 .dockerignore
@@ -27,12 +18,7 @@ docker-compose.yml
 .git
 .gitignore
 
-# === Environment / Secrets ===
-.env
-.env.*
-*.secret
-*.key
-*.pem
+
 
 # === OS / Editor Files ===
 .DS_Store
