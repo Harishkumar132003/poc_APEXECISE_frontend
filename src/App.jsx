@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
-import axios from 'axios'
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import {
   AppBar,
   Toolbar,
@@ -22,7 +22,7 @@ import {
   Avatar,
   Chip,
   Badge,
-} from '@mui/material'
+} from '@mui/material';
 import {
   Logout as LogoutIcon,
   Send as SendIcon,
@@ -30,59 +30,64 @@ import {
   Person as PersonIcon,
   SmartToy as BotIcon,
   Clear as ClearIcon,
-} from '@mui/icons-material'
-import './App.css'
+} from '@mui/icons-material';
+import './App.css';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'
-const USER_API_BASE_URL = import.meta.env.VITE_USER_API_BASE_URL || 'http://localhost:5005'
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+const USER_API_BASE_URL =
+  import.meta.env.VITE_USER_API_BASE_URL || 'http://localhost:5005';
 
-let historyFetchedThisPage = false
+let historyFetchedThisPage = false;
 
 function useSession() {
-  const [usercode, setUsercode] = useState(() => localStorage.getItem('usercode') || '')
-  const [role, setRole] = useState(() => localStorage.getItem('role') || '')
+  const [usercode, setUsercode] = useState(
+    () => localStorage.getItem('usercode') || ''
+  );
+  const [role, setRole] = useState(() => localStorage.getItem('role') || '');
 
-  const loggedIn = !!role && (role === 'user' || !!usercode)
+  const loggedIn = !!role && (role === 'user' || !!usercode);
 
   const login = (uc, r) => {
-    localStorage.setItem('usercode', uc)
-    localStorage.setItem('role', r)
-    setUsercode(uc)
-    setRole(r)
-    historyFetchedThisPage = false
-    sessionStorage.removeItem(`historyFetched:${uc}`)
-  }
+    localStorage.setItem('usercode', uc);
+    localStorage.setItem('role', r);
+    setUsercode(uc);
+    setRole(r);
+    historyFetchedThisPage = false;
+    sessionStorage.removeItem(`historyFetched:${uc}`);
+  };
 
   const logout = () => {
-    const uc = localStorage.getItem('usercode')
-    localStorage.removeItem('usercode')
-    localStorage.removeItem('role')
-    if (uc) sessionStorage.removeItem(`historyFetched:${uc}`)
-    setUsercode('')
-    setRole('')
-    historyFetchedThisPage = false
-  }
+    const uc = localStorage.getItem('usercode');
+    localStorage.removeItem('usercode');
+    localStorage.removeItem('role');
+    if (uc) sessionStorage.removeItem(`historyFetched:${uc}`);
+    setUsercode('');
+    setRole('');
+    historyFetchedThisPage = false;
+  };
 
-  return { usercode, role, loggedIn, login, logout }
+  return { usercode, role, loggedIn, login, logout };
 }
 
 function LoginPage({ onLogin }) {
-  const [role, setRole] = useState('')
-  const [usercode, setUsercode] = useState('')
-  const [errors, setErrors] = useState({})
-  const navigate = useNavigate()
+  const [role, setRole] = useState('');
+  const [usercode, setUsercode] = useState('');
+  const [errors, setErrors] = useState({});
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
-    e.preventDefault()
-    const newErrors = {}
-    if (!role) newErrors.role = 'Please select a role'
-    if (role !== 'user' && !usercode.trim()) newErrors.usercode = 'Please enter user id'
-    setErrors(newErrors)
-    if (Object.keys(newErrors).length) return
+    e.preventDefault();
+    const newErrors = {};
+    if (!role) newErrors.role = 'Please select a role';
+    if (role !== 'user' && !usercode.trim())
+      newErrors.usercode = 'Please enter user id';
+    setErrors(newErrors);
+    if (Object.keys(newErrors).length) return;
 
-    onLogin(role === 'user' ? '' : usercode.trim(), role)
-    navigate('/chat', { replace: true })
-  }
+    onLogin(role === 'user' ? '' : usercode.trim(), role);
+    navigate('/chat', { replace: true });
+  };
 
   return (
     <Box
@@ -116,7 +121,7 @@ function LoginPage({ onLogin }) {
         },
       }}
     >
-      <Container maxWidth="sm" sx={{ position: 'relative', zIndex: 1 }}>
+      <Container maxWidth='sm' sx={{ position: 'relative', zIndex: 1 }}>
         <Paper
           elevation={24}
           sx={{
@@ -144,7 +149,7 @@ function LoginPage({ onLogin }) {
               <BotIcon sx={{ fontSize: 40, color: 'white' }} />
             </Box>
             <Typography
-              variant="h4"
+              variant='h4'
               sx={{
                 fontWeight: 700,
                 background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
@@ -156,19 +161,19 @@ function LoginPage({ onLogin }) {
             >
               Welcome Back
             </Typography>
-            <Typography variant="body1" color="text.secondary">
+            <Typography variant='body1' color='text.secondary'>
               Sign in to continue to your workspace
             </Typography>
           </Box>
 
-          <Box component="form" onSubmit={handleSubmit}>
+          <Box component='form' onSubmit={handleSubmit}>
             <TextField
               select
               fullWidth
-              label="Select Role"
+              label='Select Role'
               value={role}
               onChange={(e) => setRole(e.target.value)}
-              margin="normal"
+              margin='normal'
               error={!!errors.role}
               helperText={errors.role}
               sx={{
@@ -181,56 +186,71 @@ function LoginPage({ onLogin }) {
                 },
               }}
             >
-              <MenuItem value="depot">
+              <MenuItem value='depot'>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <Box
                     sx={{
                       width: 32,
                       height: 32,
                       borderRadius: 2,
-                      background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                      background:
+                        'linear-gradient(135deg, #10b981 0%, #059669 100%)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                     }}
                   >
-                    <Typography sx={{ color: 'white', fontSize: 14, fontWeight: 700 }}>D</Typography>
+                    <Typography
+                      sx={{ color: 'white', fontSize: 14, fontWeight: 700 }}
+                    >
+                      D
+                    </Typography>
                   </Box>
                   Depot
                 </Box>
               </MenuItem>
-              <MenuItem value="distillery">
+              <MenuItem value='distillery'>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <Box
                     sx={{
                       width: 32,
                       height: 32,
                       borderRadius: 2,
-                      background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                      background:
+                        'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                     }}
                   >
-                    <Typography sx={{ color: 'white', fontSize: 14, fontWeight: 700 }}>D</Typography>
+                    <Typography
+                      sx={{ color: 'white', fontSize: 14, fontWeight: 700 }}
+                    >
+                      D
+                    </Typography>
                   </Box>
                   Distillery
                 </Box>
               </MenuItem>
-              <MenuItem value="user">
+              <MenuItem value='user'>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <Box
                     sx={{
                       width: 32,
                       height: 32,
                       borderRadius: 2,
-                      background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                      background:
+                        'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                     }}
                   >
-                    <Typography sx={{ color: 'white', fontSize: 14, fontWeight: 700 }}>U</Typography>
+                    <Typography
+                      sx={{ color: 'white', fontSize: 14, fontWeight: 700 }}
+                    >
+                      U
+                    </Typography>
                   </Box>
                   User
                 </Box>
@@ -239,14 +259,16 @@ function LoginPage({ onLogin }) {
 
             <TextField
               fullWidth
-              label="User ID"
-              placeholder="Enter your user code"
+              label='User ID'
+              placeholder='Enter your user code'
               value={usercode}
               onChange={(e) => setUsercode(e.target.value)}
-              margin="normal"
+              margin='normal'
               disabled={role === 'user'}
               error={!!errors.usercode && role !== 'user'}
-              helperText={role === 'user' ? 'Not required for User' : errors.usercode}
+              helperText={
+                role === 'user' ? 'Not required for User' : errors.usercode
+              }
               sx={{
                 '& .MuiOutlinedInput-root': {
                   borderRadius: 3,
@@ -260,9 +282,9 @@ function LoginPage({ onLogin }) {
 
             <Button
               fullWidth
-              variant="contained"
-              type="submit"
-              size="large"
+              variant='contained'
+              type='submit'
+              size='large'
               sx={{
                 mt: 3,
                 py: 1.5,
@@ -273,7 +295,8 @@ function LoginPage({ onLogin }) {
                 background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                 boxShadow: '0 8px 24px rgba(102, 126, 234, 0.4)',
                 '&:hover': {
-                  background: 'linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%)',
+                  background:
+                    'linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%)',
                   boxShadow: '0 12px 32px rgba(102, 126, 234, 0.5)',
                 },
               }}
@@ -283,43 +306,47 @@ function LoginPage({ onLogin }) {
           </Box>
 
           <Divider sx={{ my: 3 }}>
-            <Chip label="Secure Login" size="small" />
+            <Chip label='Secure Login' size='small' />
           </Divider>
 
-          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', textAlign: 'center' }}>
+          <Typography
+            variant='caption'
+            color='text.secondary'
+            sx={{ display: 'block', textAlign: 'center' }}
+          >
             Your session is encrypted and secure
           </Typography>
         </Paper>
       </Container>
     </Box>
-  )
+  );
 }
 
 function ChatTopBar({ usercode, role, onLogout, messageCount }) {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handleLogout = () => {
-    const ok = window.confirm('Log out from this session?')
-    if (!ok) return
-    onLogout()
-    navigate('/login', { replace: true })
-  }
+    const ok = window.confirm('Log out from this session?');
+    if (!ok) return;
+    onLogout();
+    navigate('/login', { replace: true });
+  };
 
   const getRoleConfig = () => {
     if (role === 'depot') {
-      return { color: '#10b981', bg: '#d1fae5', label: 'Depot' }
+      return { color: '#10b981', bg: '#d1fae5', label: 'Depot' };
     }
     if (role === 'user') {
-      return { color: '#3b82f6', bg: '#dbeafe', label: 'User' }
+      return { color: '#3b82f6', bg: '#dbeafe', label: 'User' };
     }
-    return { color: '#f59e0b', bg: '#fef3c7', label: 'Distillery' }
-  }
+    return { color: '#f59e0b', bg: '#fef3c7', label: 'Distillery' };
+  };
 
-  const roleConfig = getRoleConfig()
+  const roleConfig = getRoleConfig();
 
   return (
     <AppBar
-      position="sticky"
+      position='sticky'
       elevation={0}
       sx={{
         background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
@@ -327,7 +354,9 @@ function ChatTopBar({ usercode, role, onLogout, messageCount }) {
       }}
     >
       <Toolbar sx={{ py: 1 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexGrow: 1 }}>
+        <Box
+          sx={{ display: 'flex', alignItems: 'center', gap: 2, flexGrow: 1 }}
+        >
           <Box
             sx={{
               width: 48,
@@ -343,15 +372,19 @@ function ChatTopBar({ usercode, role, onLogout, messageCount }) {
           </Box>
 
           <Box>
-            <Typography variant="h6" sx={{ fontWeight: 700, color: 'white' }}>
+            <Typography variant='h6' sx={{ fontWeight: 700, color: 'white' }}>
               AI Assistant
             </Typography>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               {usercode && (
                 <Chip
-                  icon={<PersonIcon sx={{ fontSize: 14, color: roleConfig.color }} />}
+                  icon={
+                    <PersonIcon
+                      sx={{ fontSize: 14, color: roleConfig.color }}
+                    />
+                  }
                   label={usercode}
-                  size="small"
+                  size='small'
                   sx={{
                     bgcolor: 'rgba(255, 255, 255, 0.95)',
                     color: '#1e293b',
@@ -362,7 +395,7 @@ function ChatTopBar({ usercode, role, onLogout, messageCount }) {
               )}
               <Chip
                 label={roleConfig.label}
-                size="small"
+                size='small'
                 sx={{
                   bgcolor: roleConfig.bg,
                   color: roleConfig.color,
@@ -400,41 +433,191 @@ function ChatTopBar({ usercode, role, onLogout, messageCount }) {
         </Box>
       </Toolbar>
     </AppBar>
-  )
+  );
 }
 
-function toMessageItems(historyRows) {
-  const items = []
-  for (const row of historyRows) {
-    if (row.message) {
-      items.push({ id: `${row.created_at}-u`, role: 'user', content: row.message, ts: row.created_at })
+function toMessageItems(rows) {
+  const items = [];
+
+  rows.forEach((r, i) => {
+    // User message (may include audio + transcription)
+    if (r.message) {
+      items.push({
+        id: `u-${r.created_at}-${i}`,
+        role: 'user',
+        content: r.message,
+        audio: r.audio || null, // expect base64 string or null
+        ts: r.created_at,
+      });
     }
-    if (row.response) {
-      items.push({ id: `${row.created_at}-a`, role: 'assistant', content: row.response, ts: row.created_at })
+
+    // Assistant response (text only)
+    if (r.response) {
+      items.push({
+        id: `a-${r.created_at}-${i}`,
+        role: 'assistant',
+        content: r.response,
+        audio: null,
+        ts: r.created_at,
+        isaudiores:r.audio?true:false
+      });
     }
-  }
-  return items
+  });
+
+  return items;
 }
 
-function ChatPage({ usercode, role,logout }) {
-  const [messages, setMessages] = useState([])
-  const [input, setInput] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-  const listRef = useRef(null)
+function ChatPage({ usercode, role, logout }) {
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const api5000 = useMemo(() => axios.create({ baseURL: API_BASE_URL, timeout: 30000 }), [])
-  const api5005 = useMemo(() => axios.create({ baseURL: USER_API_BASE_URL, timeout: 30000 }), [])
+  const [recording, setRecording] = useState(false);
 
+  const mediaRecorderRef = useRef(null);
+  const chunksRef = useRef([]);
+  const listRef = useRef(null);
+
+  const api5000 = useMemo(
+    () => axios.create({ baseURL: API_BASE_URL, timeout: 30000 }),
+    []
+  );
+  const api5005 = useMemo(
+    () => axios.create({ baseURL: USER_API_BASE_URL, timeout: 30000 }),
+    []
+  );
+
+  // ----------------------------------------------------------
+  // START RECORDING
+  // ----------------------------------------------------------
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const recorder = new MediaRecorder(stream);
+
+      chunksRef.current = [];
+      mediaRecorderRef.current = recorder;
+
+      recorder.ondataavailable = (e) => {
+        chunksRef.current.push(e.data);
+      };
+
+      recorder.onstop = () => {};
+
+      recorder.start();
+      setRecording(true);
+    } catch (err) {
+      setError('Microphone access denied');
+    }
+  };
+
+  // ----------------------------------------------------------
+  // STOP AND SEND
+  // ----------------------------------------------------------
+  const stopAndSend = () => {
+    if (!mediaRecorderRef.current || !recording) return;
+
+    const recorder = mediaRecorderRef.current;
+
+    recorder.onstop = async () => {
+      const blob = new Blob(chunksRef.current, { type: 'audio/webm' });
+      chunksRef.current = [];
+      setRecording(false);
+
+      const now = Date.now();
+
+      // 👉 1. Immediately show audio bubble (before sending)
+      setMessages((m) => [
+        ...m,
+        {
+          id: `${now}-u-audio`,
+          role: 'user',
+          audio: URL.createObjectURL(blob), // local preview
+          content: '', // no text yet
+          ts: new Date().toISOString(),
+        },
+      ]);
+
+      // 👉 2. Send to backend
+      await sendVoiceMessage(blob, now);
+    };
+
+    recorder.stop();
+  };
+
+  // ----------------------------------------------------------
+  // CANCEL RECORDING
+  // ----------------------------------------------------------
+  const cancelRecording = () => {
+    if (mediaRecorderRef.current && recording) {
+      mediaRecorderRef.current.onstop = () => {};
+      mediaRecorderRef.current.stop();
+    }
+    chunksRef.current = [];
+    setRecording(false);
+  };
+
+  // ----------------------------------------------------------
+  // SEND AUDIO MESSAGE
+  // ----------------------------------------------------------
+  const sendVoiceMessage = async (blob, msgId) => {
+    if (!blob) return;
+
+    const formData = new FormData();
+    formData.append('audio', blob, 'voice.webm');
+    formData.append('usercode', usercode);
+    formData.append('role', role);
+
+    try {
+      setLoading(true);
+
+      const res = await api5000.post('/voice', formData);
+
+      const text = res.data.voice_text || '';
+      const reply = res.data.response || '';
+
+      // 👉 3. Update the existing audio bubble to include the transcription
+      setMessages((m) =>
+        m.map((msg) =>
+          msg.id === `${msgId}-u-audio`
+            ? { ...msg, content: text } // add transcription under audio
+            : msg
+        )
+      );
+
+      // 👉 4. Append assistant reply
+      setMessages((m) => [
+        ...m,
+        {
+          id: `${Date.now()}-a`,
+          role: 'assistant',
+          content: reply,
+          ts: new Date().toISOString(),
+        },
+      ]);
+    } catch (err) {
+      setError('Voice query failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ----------------------------------------------------------
+  // HISTORY LOADING
+  // ----------------------------------------------------------
   useEffect(() => {
-    if (role === 'user') return
-    if (historyFetchedThisPage) return
-    historyFetchedThisPage = true
+    if (role === 'user') return;
+    if (historyFetchedThisPage) return;
+    historyFetchedThisPage = true;
 
     const fetchHistory = async () => {
       try {
-        const res = await api5000.get(`/analyze/history/${encodeURIComponent(usercode)}`)
-        const rows = res.data?.history || []
+        const res = await api5000.get(
+          `/analyze/history/${encodeURIComponent(usercode)}`
+        );
+        const rows = res.data?.history || [];
+
         if (rows.length === 0) {
           setMessages([
             {
@@ -443,73 +626,131 @@ function ChatPage({ usercode, role,logout }) {
               content: 'No previous conversations. Start a new conversation!',
               ts: new Date().toISOString(),
             },
-          ])
+          ]);
         } else {
-          setMessages(toMessageItems(rows))
+          setMessages(toMessageItems(rows));
         }
-      } catch (e) {
-        setError('Failed to load history')
+      } catch {
+        setError('Failed to load history');
       }
-    }
+    };
 
-    fetchHistory()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [role, usercode])
+    fetchHistory();
+  }, [role, usercode]);
 
+  // ----------------------------------------------------------
+  // AUTO-SCROLL
+  // ----------------------------------------------------------
   useEffect(() => {
-    if (!listRef.current) return
-    listRef.current.scrollTop = listRef.current.scrollHeight
-  }, [messages, loading])
+    if (!listRef.current) return;
+    listRef.current.scrollTop = listRef.current.scrollHeight;
+  }, [messages, loading]);
 
+  // ----------------------------------------------------------
+  // SEND TEXT MESSAGE
+  // ----------------------------------------------------------
   const sendMessage = async () => {
-    const q = input.trim()
-    if (!q || loading) return
+    const q = input.trim();
+    if (!q || loading) return;
 
-    const userMsg = { id: `${Date.now()}-u`, role: 'user', content: q, ts: new Date().toISOString() }
-    setMessages((m) => [...m, userMsg])
-    setInput('')
-    setLoading(true)
+    const userMsg = {
+      id: `${Date.now()}-u`,
+      role: 'user',
+      content: q,
+      ts: new Date().toISOString(),
+    };
+
+    setMessages((m) => [...m, userMsg]);
+    setInput('');
+    setLoading(true);
+
     try {
-      let res
+      let res;
+
       if (role === 'user') {
-        res = await api5005.post('/userquery', { query: q })
+        res = await api5005.post('/userquery', { query: q });
       } else {
-        res = await api5000.post('/analyze', { query: q, usercode, role })
+        res = await api5000.post('/analyze', { query: q, usercode, role });
       }
-      const answer = res?.data?.response ?? res?.data?.answer ?? res?.data?.result ?? res?.data?.message ?? (typeof res?.data === 'string' ? res.data : 'No response')
-      const aiMsg = { id: `${Date.now()}-a`, role: 'assistant', content: answer, ts: new Date().toISOString() }
-      setMessages((m) => [...m, aiMsg])
+
+      const answer =
+        res?.data?.response ??
+        res?.data?.answer ??
+        res?.data?.result ??
+        res?.data?.message ??
+        (typeof res?.data === 'string' ? res.data : 'No response');
+
+      setMessages((m) => [
+        ...m,
+        {
+          id: `${Date.now()}-a`,
+          role: 'assistant',
+          content: answer,
+          ts: new Date().toISOString(),
+        },
+      ]);
     } catch (e) {
-      const msg = e.response?.data?.error || e.message || 'Request failed'
-      setError(msg)
+      setError(e?.response?.data?.error || e.message || 'Request failed');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      sendMessage()
-    } else if (e.key === 'Escape') {
-      setInput('')
+      e.preventDefault();
+      sendMessage();
     }
+  };
+
+  const clearInput = () => setInput('');
+
+  const playTTS = async (text) => {
+  try {
+    const res = await api5000.post("/tts", { text });  // JSON
+
+    const base64 = res.data.audio;
+    const audioUrl = base64;
+
+    const audio = new Audio(audioUrl);
+    audio.play();
+
+  } catch (err) {
+    console.error("Error playing TTS", err);
   }
+};
 
-  const clearInput = () => setInput('')
 
+
+  console.log('Messages:', messages);
+
+  // ----------------------------------------------------------
+  // UI START
+  // ----------------------------------------------------------
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 64px)', bgcolor: '#f8fafc' }}>
-      <ChatTopBar usercode={usercode} role={role} onLogout={logout} messageCount={messages.length} />
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        height: 'calc(100vh - 64px)',
+        bgcolor: '#f8fafc',
+      }}
+    >
+      <ChatTopBar
+        usercode={usercode}
+        role={role}
+        onLogout={logout}
+        messageCount={messages.length}
+      />
 
       <Container
-        maxWidth="lg"
+        maxWidth='lg'
         sx={{
           flex: 1,
           py: 3,
           display: 'flex',
           flexDirection: 'column',
-          height:'calc(100vh - 105px)'
+          height: 'calc(100vh - 105px)',
         }}
       >
         <Paper
@@ -524,19 +765,24 @@ function ChatPage({ usercode, role,logout }) {
             boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
           }}
         >
-          {/* Messages Area */}
+          {/* MESSAGES AREA */}
           <Box
             ref={listRef}
             sx={{
               flex: 1,
               overflowY: 'auto',
               p: 3,
-              background: 'linear-gradient(to bottom, #ffffff 0%, #f8fafc 100%)',
+              background:
+                'linear-gradient(to bottom, #ffffff 0%, #f8fafc 100%)',
             }}
           >
             <List sx={{ width: '100%' }}>
               {messages.map((m) => (
-                <ListItem key={m.id} alignItems="flex-start" sx={{ px: 0, mb: 2 }}>
+                <ListItem
+                  key={m.id}
+                  alignItems='flex-start'
+                  sx={{ px: 0, mb: 2 }}
+                >
                   <Box
                     sx={{
                       display: 'flex',
@@ -549,27 +795,25 @@ function ChatPage({ usercode, role,logout }) {
                     {m.role === 'assistant' ? (
                       <Avatar
                         sx={{
-                          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                          background:
+                            'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                           width: 40,
                           height: 40,
-                          boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)',
                         }}
                       >
                         <BotIcon />
                       </Avatar>
-                    ) : m.role === 'user' ? (
+                    ) : (
                       <Avatar
                         sx={{
-                          background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                          background:
+                            'linear-gradient(135deg, #10b981 0%, #059669 100%)',
                           width: 40,
                           height: 40,
-                          boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)',
                         }}
                       >
                         <PersonIcon />
                       </Avatar>
-                    ) : (
-                      <Avatar sx={{ bgcolor: '#94a3b8', width: 40, height: 40 }}>i</Avatar>
                     )}
 
                     <Paper
@@ -581,24 +825,62 @@ function ChatPage({ usercode, role,logout }) {
                         bgcolor: m.role === 'user' ? '#eff6ff' : 'white',
                         border: '1px solid',
                         borderColor: m.role === 'user' ? '#dbeafe' : '#e2e8f0',
-                        boxShadow: m.role === 'user' ? '0 2px 8px rgba(59, 130, 246, 0.1)' : '0 2px 8px rgba(0,0,0,0.05)',
                       }}
                     >
-                      <ListItemText
-                        primaryTypographyProps={{
-                          sx: {
-                            whiteSpace: 'pre-wrap',
-                            fontSize: 15,
-                            lineHeight: 1.6,
-                            color: '#1e293b',
-                          },
-                        }}
-                        secondaryTypographyProps={{
-                          sx: { fontSize: 12, color: '#64748b', mt: 1 },
-                        }}
-                        primary={m.content}
-                        secondary={new Date(m.ts).toLocaleString()}
-                      />
+                      <Box>
+                        {m.audio ? (
+                          <>
+                            {/* try webm first; if your backend uses a different format adjust mime type */}
+                            <audio
+                              controls
+                              src={
+                                m.audio?.startsWith('blob:')
+                                  ? m.audio
+                                  : m.audio // history from DB
+                              }
+                              style={{ width: '100%', marginBottom: 8 }}
+                            />
+                            {/* show transcription under the player (if present) */}
+                          </>
+                        ) : (
+                          <Typography
+                            sx={{
+                              whiteSpace: 'pre-wrap',
+                              fontSize: 15,
+                              lineHeight: 1.6,
+                            }}
+                          >
+                            {m.content}
+                          </Typography>
+                        )}
+
+                        <Typography
+                          sx={{ fontSize: 12, color: '#64748b', mt: 1 }}
+                        >
+                          {new Date(m.ts).toLocaleString()}
+                        </Typography>
+                          {m.isaudiores && (
+  <Box
+    onClick={() => playTTS(m.content)}
+    sx={{
+      display: "inline-flex",
+      alignItems: "center",
+      gap: 0.8,
+      px: 1.2,
+      py: 0.4,
+      borderRadius: "16px",
+      bgcolor: "#e2e8f0",
+      cursor: "pointer",
+      transition: "all 0.2s",
+      "&:hover": { bgcolor: "#cbd5e1" }
+    }}
+  >
+    <Typography sx={{ fontSize: 12, fontWeight: 500, color: "#475569" }}>
+      Play Audio
+    </Typography>
+  </Box>
+)}
+                      </Box>
                     </Paper>
                   </Box>
                 </ListItem>
@@ -606,32 +888,7 @@ function ChatPage({ usercode, role,logout }) {
 
               {loading && (
                 <ListItem sx={{ px: 0 }}>
-                  <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-                    <Avatar
-                      sx={{
-                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                        width: 40,
-                        height: 40,
-                      }}
-                    >
-                      <BotIcon />
-                    </Avatar>
-                    <Paper
-                      elevation={0}
-                      sx={{
-                        p: 2,
-                        borderRadius: 3,
-                        bgcolor: 'white',
-                        border: '1px solid #e2e8f0',
-                      }}
-                    >
-                      <Box sx={{ display: 'flex', gap: 0.5 }}>
-                        <CircularProgress size={8} />
-                        <CircularProgress size={8} sx={{ animationDelay: '0.2s' }} />
-                        <CircularProgress size={8} sx={{ animationDelay: '0.4s' }} />
-                      </Box>
-                    </Paper>
-                  </Box>
+                  <CircularProgress size={24} />
                 </ListItem>
               )}
             </List>
@@ -639,36 +896,85 @@ function ChatPage({ usercode, role,logout }) {
 
           <Divider />
 
-          {/* Input Area */}
+          {/* INPUT AREA */}
           <Box
-            sx={{
-              p: 2.5,
-              bgcolor: 'white',
-              borderTop: '1px solid #e2e8f0',
-            }}
+            sx={{ p: 2.5, bgcolor: 'white', borderTop: '1px solid #e2e8f0' }}
           >
             <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'flex-end' }}>
+              {/* VOICE BUTTONS */}
+              {role !== 'user' && (
+                <>
+                  {!recording && (
+                    <IconButton
+                      onClick={startRecording}
+                      sx={{
+                        background: '#e0e7ff',
+                        color: '#4f46e5',
+                        '&:hover': { background: '#c7d2fe' },
+                      }}
+                    >
+                      🎤
+                    </IconButton>
+                  )}
+
+                  {recording && (
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1,
+                        px: 2,
+                        py: 1,
+                        borderRadius: 3,
+                        background: '#fee2e2',
+                        border: '1px solid #fecaca',
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          width: 12,
+                          height: 12,
+                          borderRadius: '50%',
+                          background: '#dc2626',
+                          animation: 'pulse 1s infinite',
+                        }}
+                      />
+                      <Typography sx={{ fontWeight: 600, color: '#dc2626' }}>
+                        Recording...
+                      </Typography>
+
+                      <IconButton
+                        onClick={cancelRecording}
+                        sx={{ color: '#dc2626' }}
+                      >
+                        ✖
+                      </IconButton>
+                      <IconButton
+                        onClick={stopAndSend}
+                        sx={{ color: '#059669' }}
+                      >
+                        ✓
+                      </IconButton>
+                    </Box>
+                  )}
+                </>
+              )}
+
+              {/* TEXT INPUT */}
               <TextField
                 fullWidth
                 multiline
                 maxRows={4}
-                placeholder="Type your query... (Press Enter to send, Shift+Enter for new line)"
+                placeholder='Type your query...'
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
                 disabled={loading}
-                autoFocus
                 sx={{
                   '& .MuiOutlinedInput-root': {
                     borderRadius: 3,
                     bgcolor: '#f8fafc',
-                    '&.Mui-focused': {
-                      bgcolor: 'white',
-                    },
-                    '&.Mui-focused fieldset': {
-                      borderColor: '#667eea',
-                      borderWidth: 2,
-                    },
+                    '&.Mui-focused fieldset': { borderColor: '#667eea' },
                   },
                 }}
               />
@@ -677,18 +983,22 @@ function ChatPage({ usercode, role,logout }) {
                 <IconButton
                   onClick={clearInput}
                   disabled={loading}
-                  sx={{
-                    color: '#64748b',
-                    '&:hover': { bgcolor: '#f1f5f9' },
-                  }}
+                  sx={{ color: '#64748b' }}
                 >
                   <ClearIcon />
                 </IconButton>
               )}
 
+              {/* SEND TEXT BUTTON */}
               <Button
-                variant="contained"
-                endIcon={loading ? <CircularProgress color="inherit" size={18} /> : <SendIcon />}
+                variant='contained'
+                endIcon={
+                  loading ? (
+                    <CircularProgress color='inherit' size={18} />
+                  ) : (
+                    <SendIcon />
+                  )
+                }
                 disabled={loading || !input.trim()}
                 onClick={sendMessage}
                 sx={{
@@ -696,70 +1006,66 @@ function ChatPage({ usercode, role,logout }) {
                   py: 1.5,
                   borderRadius: 3,
                   textTransform: 'none',
-                  fontSize: 15,
-                  fontWeight: 600,
-                  minWidth: 120,
-                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                  boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)',
-                  '&:hover': {
-                    background: 'linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%)',
-                    boxShadow: '0 6px 16px rgba(102, 126, 234, 0.4)',
-                  },
-                  '&:disabled': {
-                    background: '#e2e8f0',
-                    color: '#94a3b8',
-                  },
+                  background:
+                    'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                 }}
               >
                 Send
               </Button>
             </Box>
-
-            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1, ml: 1 }}>
-              Press Enter to send • Shift+Enter for new line • Esc to clear
-            </Typography>
           </Box>
         </Paper>
       </Container>
 
+      {/* ERROR POPUP */}
       <Snackbar
         open={!!error}
         autoHideDuration={5000}
         onClose={() => setError('')}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       >
-        <Alert
-          severity="error"
-          onClose={() => setError('')}
-          variant="filled"
-          sx={{
-            borderRadius: 3,
-            boxShadow: '0 8px 24px rgba(239, 68, 68, 0.3)',
-          }}
-        >
+        <Alert severity='error' variant='filled' onClose={() => setError('')}>
           {error}
         </Alert>
       </Snackbar>
     </Box>
-  )
+  );
 }
 
 function AppShell() {
-  const { usercode, role, loggedIn, login, logout } = useSession()
+  const { usercode, role, loggedIn, login, logout } = useSession();
 
   return (
     <Routes>
-      <Route path="/login" element={loggedIn ? <Navigate to="/chat" replace /> : <LoginPage onLogin={login} />} />
       <Route
-        path="/chat"
-        element={loggedIn ? <ChatPage usercode={usercode} role={role} logout={logout}/> : <Navigate to="/login" replace />}
+        path='/login'
+        element={
+          loggedIn ? (
+            <Navigate to='/chat' replace />
+          ) : (
+            <LoginPage onLogin={login} />
+          )
+        }
       />
-      <Route path="/" element={<Navigate to={loggedIn ? '/chat' : '/login'} replace />} />
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route
+        path='/chat'
+        element={
+          loggedIn ? (
+            <ChatPage usercode={usercode} role={role} logout={logout} />
+          ) : (
+            <Navigate to='/login' replace />
+          )
+        }
+      />
+      <Route
+        path='/'
+        element={<Navigate to={loggedIn ? '/chat' : '/login'} replace />}
+      />
+      <Route path='*' element={<Navigate to='/' replace />} />
     </Routes>
-  )
+  );
 }
 
 export default function App() {
-  return <AppShell />
+  return <AppShell />;
 }
