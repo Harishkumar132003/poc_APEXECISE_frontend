@@ -493,7 +493,22 @@ function ChatPage({ usercode, role, logout }) {
   // ----------------------------------------------------------
   // START RECORDING
   // ----------------------------------------------------------
+
+  const requestMicAccess = async () => {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    // close the stream immediately – we only needed permission
+    stream.getTracks().forEach((t) => t.stop());
+    return true;
+  } catch (err) {
+    setError("Please allow microphone access");
+    return false;
+  }
+};
+
   const startRecording = async () => {
+     const granted = await requestMicAccess();
+     if (!granted) return;
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const recorder = new MediaRecorder(stream);
