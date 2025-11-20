@@ -30,6 +30,8 @@ import {
   Person as PersonIcon,
   SmartToy as BotIcon,
   Clear as ClearIcon,
+  Mic as MicIcon,
+  Mic,
 } from '@mui/icons-material';
 import './App.css';
 
@@ -913,7 +915,7 @@ function ChatPage({ usercode, role, logout }) {
                         '&:hover': { background: '#c7d2fe' },
                       }}
                     >
-                      🎤
+                     <Mic />
                     </IconButton>
                   )}
 
