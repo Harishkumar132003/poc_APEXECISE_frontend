@@ -34,9 +34,10 @@ import {
   Mic,
 } from '@mui/icons-material';
 import './App.css';
+import AutoChart from "./AutoChart";
 
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+  import.meta.env.VITE_API_BASE_URL || 'http://localhost:5002';
 const USER_API_BASE_URL =
   import.meta.env.VITE_USER_API_BASE_URL || 'http://localhost:5005';
 
@@ -442,32 +443,52 @@ function toMessageItems(rows) {
   const items = [];
 
   rows.forEach((r, i) => {
-    // User message (may include audio + transcription)
+    // USER message
     if (r.message) {
       items.push({
         id: `u-${r.created_at}-${i}`,
-        role: 'user',
+        role: "user",
+        type: "text",
         content: r.message,
-        audio: r.audio || null, // expect base64 string or null
-        ts: r.created_at,
+        audio: r.audio || null,
+        ts: r.created_at
       });
     }
 
-    // Assistant response (text only)
+    // ASSISTANT response
     if (r.response) {
+      let parsed = r.response;
+      let isChart = false;
+
+      // If response is string, try parsing JSON
+      if (typeof parsed === "string") {
+        try {
+          parsed = JSON.parse(parsed);
+        } catch {
+          // Not JSON → keep as text
+        }
+      }
+
+      // Detect chart object
+      if (parsed && typeof parsed === "object" && parsed.type === "chart") {
+        isChart = true;
+      }
+
       items.push({
         id: `a-${r.created_at}-${i}`,
-        role: 'assistant',
-        content: r.response,
+        role: "assistant",
+        type: isChart ? "chart" : "text",
+        content: isChart ? "" : parsed.response || parsed,
+        chart: isChart ? parsed : null,
         audio: null,
-        ts: r.created_at,
-        isaudiores:r.audio?true:false
+        ts: r.created_at
       });
     }
   });
 
   return items;
 }
+
 
 function ChatPage({ usercode, role, logout }) {
   const [messages, setMessages] = useState([]);
@@ -604,15 +625,17 @@ function ChatPage({ usercode, role, logout }) {
       );
 
       // 👉 4. Append assistant reply
-      setMessages((m) => [
-        ...m,
-        {
-          id: `${Date.now()}-a`,
-          role: 'assistant',
-          content: reply,
-          ts: new Date().toISOString(),
-        },
-      ]);
+     setMessages((m) => [
+  ...m,
+  {
+    id: `${Date.now()}-a`,
+    role: "assistant",
+    type: reply.type || "text",
+    content: reply.type === "chart" ? "" : reply.response,
+    chart: reply.type === "chart" ? reply : null,
+    ts: new Date().toISOString(),
+  },
+]);
     } catch (err) {
       setError('Voice query failed');
     } finally {
@@ -690,22 +713,35 @@ function ChatPage({ usercode, role, logout }) {
         res = await api5000.post('/analyze', { query: q, usercode, role });
       }
 
-      const answer =
-        res?.data?.response ??
-        res?.data?.answer ??
-        res?.data?.result ??
-        res?.data?.message ??
-        (typeof res?.data === 'string' ? res.data : 'No response');
+     const backend = res.data;
 
-      setMessages((m) => [
-        ...m,
-        {
-          id: `${Date.now()}-a`,
-          role: 'assistant',
-          content: answer,
-          ts: new Date().toISOString(),
-        },
-      ]);
+// CASE 1 → normal text reply
+if (backend.type === "text") {
+  setMessages((m) => [
+    ...m,
+    {
+      id: `${Date.now()}-a`,
+      role: "assistant",
+      type: "text",
+      content: backend.response,
+      ts: new Date().toISOString(),
+    },
+  ]);
+}
+
+// CASE 2 → chart reply
+else if (backend.type === "chart") {
+  setMessages((m) => [
+    ...m,
+    {
+      id: `${Date.now()}-a`,
+      role: "assistant",
+      type: "chart",
+      chart: backend,   // full JSON
+      ts: new Date().toISOString(),
+    },
+  ]);
+}
     } catch (e) {
       setError(e?.response?.data?.error || e.message || 'Request failed');
     } finally {
@@ -845,37 +881,31 @@ function ChatPage({ usercode, role, logout }) {
                       }}
                     >
                       <Box>
-                        {m.audio ? (
-                          <>
-                            {/* try webm first; if your backend uses a different format adjust mime type */}
-                            <audio
-                              controls
-                              src={
-                                m.audio?.startsWith('blob:')
-                                  ? m.audio
-                                  : m.audio // history from DB
-                              }
-                              style={{ width: '100%', marginBottom: 8 }}
-                            />
-                            {/* show transcription under the player (if present) */}
-                          </>
-                        ) : (
-                          <Typography
-                            sx={{
-                              whiteSpace: 'pre-wrap',
-                              fontSize: 15,
-                              lineHeight: 1.6,
-                            }}
-                          >
-                            {m.content}
-                          </Typography>
-                        )}
+                          {m.type === "chart" ? (
+        <AutoChart data={m.chart} />
+    ) : m.audio ? (
+        <>
+            <audio
+                controls
+                src={m.audio}
+                style={{ width: '100%', marginBottom: 8 }}
+            />
+        </>
+    ) : (
+        <Typography
+            sx={{
+                whiteSpace: 'pre-wrap',
+                fontSize: 15,
+                lineHeight: 1.6,
+            }}
+        >
+            {m.content}
+        </Typography>
+    )}
 
-                        <Typography
-                          sx={{ fontSize: 12, color: '#64748b', mt: 1 }}
-                        >
-                          {new Date(m.ts).toLocaleString()}
-                        </Typography>
+    <Typography sx={{ fontSize: 12, color: '#64748b', mt: 1 }}>
+        {new Date(m.ts).toLocaleString()}
+    </Typography>
                           {m.isaudiores && (
   <Box
     onClick={() => playTTS(m.content)}
