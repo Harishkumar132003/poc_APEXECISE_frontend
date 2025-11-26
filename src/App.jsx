@@ -35,6 +35,7 @@ import {
 } from '@mui/icons-material';
 import './App.css';
 import AutoChart from "./AutoChart";
+import ChartRenderer from "./ChartRenderer";
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || 'http://localhost:5002';
@@ -882,7 +883,7 @@ else if (backend.type === "chart") {
                     >
                       <Box>
                           {m.type === "chart" ? (
-        <AutoChart data={m.chart} />
+        <ChartRenderer data={m} />
     ) : m.audio ? (
         <>
             <audio
