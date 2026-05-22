@@ -1,0 +1,17 @@
+services:
+  apexcisefrontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: apexcisefrontend
+    restart: unless-stopped
+    ports:
+      - "5007:5007"
+    env_file:
+      - .env
+    networks:
+      - shared-app-network
+
+networks:
+  shared-app-network:
+    external: true
