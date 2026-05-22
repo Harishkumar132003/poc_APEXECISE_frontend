@@ -159,8 +159,8 @@ export default function ChatPage({ usercode, role,logout }) {
   const [error, setError] = useState('')
   const listRef = useRef(null)
 
-  const api5000 = useMemo(() => axios.create({ baseURL: 'http://localhost:5000', timeout: 30000 }), [])
-  const api5005 = useMemo(() => axios.create({ baseURL: 'http://localhost:5005', timeout: 30000 }), [])
+  const api5000 = useMemo(() => axios.create({ baseURL: import.meta.env.VITE_API_BASE_URL || '/api', timeout: 30000 }), [])
+  const api5005 = useMemo(() => axios.create({ baseURL: import.meta.env.VITE_USER_API_BASE_URL || '/chat', timeout: 30000 }), [])
 
   useEffect(() => {
     if (role === 'user') return

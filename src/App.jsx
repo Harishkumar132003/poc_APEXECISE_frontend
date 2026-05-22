@@ -38,9 +38,9 @@ import AutoChart from "./AutoChart";
 import ChartRenderer from "./ChartRenderer";
 
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || 'http://localhost:5002';
+  import.meta.env.VITE_API_BASE_URL || '/api';
 const USER_API_BASE_URL =
-  import.meta.env.VITE_USER_API_BASE_URL || 'http://localhost:5005';
+  import.meta.env.VITE_USER_API_BASE_URL || '/chat';
 
 let historyFetchedThisPage = false;
 
