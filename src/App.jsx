@@ -743,6 +743,20 @@ else if (backend.type === "chart") {
     },
   ]);
 }
+
+// CASE 3 → userquery (PDF Q&A) reply → { question, answer, context_used }
+else if (backend.answer !== undefined || backend.response !== undefined) {
+  setMessages((m) => [
+    ...m,
+    {
+      id: `${Date.now()}-a`,
+      role: "assistant",
+      type: "text",
+      content: backend.answer ?? backend.response,
+      ts: new Date().toISOString(),
+    },
+  ]);
+}
     } catch (e) {
       setError(e?.response?.data?.error || e.message || 'Request failed');
     } finally {
